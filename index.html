@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kleinfeldt Tourenzettel</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  
+  <style>
+    /* Bildschirm Styles */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      color: #212529;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      border-left: 6px solid #dc3545;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      justify-content: space-between;
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .logo {
+      height: 64px;
+    }
+    
+    .title {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+      color: #343a40;
+    }
+    
+    .admin-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: end;
+      gap: 10px;
+    }
+    
+    .form-panel {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .form-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #dc3545 0%, #b02a37 100%);
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #343a40;
+      font-size: 14px;
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #dee2e6;
+      border-radius: 12px;
+      font-size: 15px;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #dc3545;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+    
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    
+    .button-row {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #b02a37;
+      transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+      background: #343a40;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #495057;
+      transform: translateY(-1px);
+    }
+    
+    .btn-outline {
+      background: white;
+      color: #343a40;
+      border: 2px solid #dee2e6;
+    }
+    
+    .btn-outline:hover {
+      border-color: #343a40;
+      transform: translateY(-1px);
+    }
+    
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+    
+    .address-check {
+      margin-top: 10px;
+      width: 100%;
+      background: white;
+      color: #dc3545;
+      border: 2px solid #dc3545;
+    }
+    
+    .address-check:hover {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .tours-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 30px;
+    }
+    
+    .tour-section {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .tour-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #dc3545;
+    }
+    
+    .tour-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 25px 0;
+      color: #343a40;
+    }
+    
+    .order-card {
+      border: 1px solid #dee2e6;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      position: relative;
+      transition: transform 0.2s;
+    }
+    
+    .order-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    
+    .order-card.highlight {
+      background: #fff3cd;
+      border-color: #ffc107;
+    }
+    
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+    
+    .customer-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #343a40;
+      flex: 1;
+    }
+    
+    .delivery-time {
+      font-size: 20px;
+      font-weight: 700;
+      color: #343a40;
+      flex-shrink: 0;
+    }
+    
+    .group-badge {
+      display: inline-block;
+      margin-left: 10px;
+      padding: 4px 12px;
+      background: #dc3545;
+      color: white;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .order-details {
+      line-height: 1.6;
+      margin-right: 7.5rem;
+    }
+    
+    .order-details div {
+      margin: 10px 0;
+    }
+    
+    .detail-label {
+      font-weight: 600;
+      color: #6c757d;
+      font-size: 14px;
+      display: inline-block;
+      width: 120px;
+    }
+    
+    .qr-link {
+      position: absolute;
+      right: 0.8rem;
+      bottom: 0.8rem;
+      width: 7rem;
+      height: 7rem;
+    }
+    
+    .qr-code {
+      width: 7rem;
+      height: 7rem;
+      border-radius: 8px;
+    }
+    
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #dc3545;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    
+    .delete-btn:hover {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .tag-chip {
+      background: #e9ecef;
+      border: 1px solid #dee2e6;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    
+    .tag-chip:hover {
+      background: #dc3545;
+      color: white;
+      border-color: #dc3545;
+    }
+    
+    .tag-chip.active {
+      background: #dc3545;
+      color: white;
+      border-color: #dc3545;
+    }
+    
+    .edit-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .edit-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .edit-btn.edit {
+      background: #28a745;
+      color: white;
+    }
+    
+    .edit-btn.edit:hover {
+      background: #218838;
+    }
+    
+    .edit-btn.move {
+      background: #17a2b8;
+      color: white;
+    }
+    
+    .edit-btn.move:hover {
+      background: #138496;
+    }
+    
+    .edit-btn.delete {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .edit-btn.delete:hover {
+      background: #c82333;
+    }
+    
+    @media (max-width: 768px) {
+      .tours-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .button-row {
+        flex-direction: column;
+      }
+      
+      .edit-buttons {
+        display: none !important;
+      }
+    }
+  </style>
+  
+  <!-- PRINT STYLES -->
+  <style media="print">
+    .header,
+    .form-panel,
+    .delete-btn {
+      display: none !important;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      font-size: 10px;
+    }
+    
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 1.2rem;
+      line-height: 1.3;
+      background: white;
+      color: black;
+      margin: 0;
+      padding: 0.8rem;
+    }
+    
+    .container {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .tours-container {
+      display: flex;
+      width: 100%;
+      gap: 1rem;
+    }
+    
+    .tour-section {
+      width: 50%;
+      border: 0.2rem solid black;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      background: white;
+      box-shadow: none;
+    }
+    
+    .tour-section::before {
+      display: none;
+    }
+    
+    .tour-title {
+      font-size: 2rem;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 0.8rem;
+      border-bottom: 0.2rem solid black;
+      padding-bottom: 0.4rem;
+      text-transform: uppercase;
+    }
+    
+    .order-card {
+      border: 0.15rem solid black;
+      border-radius: 0.3rem;
+      padding: 0.8rem;
+      margin-bottom: 0.8rem;
+      background: white;
+      box-shadow: none;
+      position: relative;
+      min-height: 6rem;
+    }
+    
+    .order-card.highlight {
+      background: #ffffcc;
+    }
+    
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.8rem;
+    }
+    
+    .customer-name {
+      font-size: 1.6rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      flex: 1;
+    }
+    
+    .delivery-time {
+      font-size: 1.4rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    
+    .group-badge {
+      font-size: 1rem;
+      font-weight: 900;
+      background: black;
+      color: white;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.3rem;
+      margin-left: 0.4rem;
+    }
+    
+    .order-details {
+      margin-right: 7.5rem;
+    }
+    
+    .detail-label {
+      font-size: 1.1rem;
+      font-weight: 900;
+      display: block;
+      margin-bottom: 0.2rem;
+      text-transform: uppercase;
+    }
+    
+    .order-details span:not(.detail-label) {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: block;
+      line-height: 1.3;
+    }
+    
+    .order-details div {
+      margin: 0.5rem 0;
+    }
+    
+    .qr-link {
+      position: absolute;
+      right: 0.8rem;
+      bottom: 0.8rem;
+      width: 7rem;
+      height: 7rem;
+    }
+    
+    .qr-code {
+      width: 7rem;
+      height: 7rem;
+    }
+    
+    .edit-buttons {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-left">
+        <img src="logo.png" alt="Kleinfeldt Party-Service Logo" class="logo">
+        <h1 class="title">Kleinfeldt Tourenzettel</h1>
+      </div>
+      <div class="admin-controls">
+        <span id="adminStatus" style="font-size: 14px; color: #6c757d;">Nur-Lese-Modus</span>
+        <button id="adminToggle" class="btn btn-outline btn-small" onclick="toggleAdmin()">Admin-Login</button>
+        <button id="passwordChange" class="btn btn-outline btn-small" onclick="changePassword()" style="display: none;">Passwort ändern</button>
+      </div>
+    </div>
+
+    <div class="form-panel">
+      <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 25px; flex-wrap: wrap;">
+        <div class="form-group" style="margin: 0; min-width: 200px;">
+          <label for="datum">Arbeitstag auswählen</label>
+          <input id="datum" type="date">
+        </div>
+        <div style="display: flex; gap: 15px; align-items: end;">
+          <button class="btn btn-primary" id="laden">Tag laden</button>
+          <button class="btn btn-outline" id="speichern" style="display: none;">Tag speichern</button>
+          <button class="btn btn-secondary" id="tagLoeschen" style="display: none;">Tag löschen</button>
+        </div>
+      </div>
+      
+      <div id="gespeicherteTage" style="margin-bottom: 20px;">
+        <h3 style="margin: 0 0 10px 0; color: #6c757d;">Gespeicherte Tage:</h3>
+        <div id="tageList" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+      </div>
+    </div>
+
+    <div class="form-panel" id="eingabePanel" style="display: none;">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="kunde">Kundenname</label>
+          <input id="kunde" type="text" placeholder="z.B. Müller GmbH">
+        </div>
+        <div class="form-group">
+          <label for="zeitart">Lieferzeit-Typ</label>
+          <select id="zeitart">
+            <option value="fest">Feste Uhrzeit</option>
+            <option value="fenster">Zeitfenster</option>
+          </select>
+        </div>
+        <div class="form-group" id="zeit-fest">
+          <label for="zeit">Lieferuhrzeit</label>
+          <input id="zeit" type="time">
+        </div>
+        <div class="form-group" id="zeit-fenster" style="display: none;">
+          <label for="zeitvon">Zeitfenster</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input id="zeitvon" type="time" placeholder="Von">
+            <span style="font-weight: 600;">bis</span>
+            <input id="zeitbis" type="time" placeholder="Bis">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="telefon">Telefonnummer</label>
+          <input id="telefon" type="text" placeholder="z.B. 0151 23456789">
+        </div>
+        <div class="form-group">
+          <label for="adresse">Lieferadresse</label>
+          <textarea id="adresse" placeholder="Straße Hausnr., PLZ Ort"></textarea>
+          <button id="addrCheck" class="btn address-check">Adresse prüfen</button>
+        </div>
+        <div class="form-group">
+          <label for="essen">Essensauswahl</label>
+          <textarea id="essen" placeholder="Gerichte / Mengen / Hinweise"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="notiz">Notiz</label>
+          <textarea id="notiz" placeholder="z.B. Klingeln bei Schmidt, 3. Etage"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="group">Sammelfahrt-Kennung (optional)</label>
+          <input id="group" type="text" placeholder="A / B / 101 …">
+        </div>
+        <div class="form-group">
+          <label for="tour">Tour</label>
+          <select id="tour">
+            <option value="1">Tour 1</option>
+            <option value="2">Tour 2</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fahrer1">Fahrer Tour 1</label>
+          <input id="fahrer1" type="text" placeholder="Name des Fahrers für Tour 1">
+        </div>
+        <div class="form-group">
+          <label for="fahrer2">Fahrer Tour 2</label>
+          <input id="fahrer2" type="text" placeholder="Name des Fahrers für Tour 2">
+        </div>
+      </div>
+      
+      <div class="button-row">
+        <button class="btn btn-primary" id="add">Auftrag hinzufügen</button>
+        <button class="btn btn-secondary" id="clear">Alle Aufträge löschen</button>
+        <button class="btn btn-outline" id="print">Drucken</button>
+      </div>
+    </div>
+
+    <div class="tours-container">
+      <div class="tour-section">
+        <h2 class="tour-title">🚚 Tour 1</h2>
+        <div id="list1"></div>
+      </div>
+      <div class="tour-section">
+        <h2 class="tour-title">🚛 Tour 2</h2>
+        <div id="list2"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    
+    // Admin-System
+    let ADMIN_PASSWORD = "kleinfeldt2024"; // Jetzt änderbar
+    let isAdminLoggedIn = false;
+    
+    function toggleAdmin() {
+      if (isAdminLoggedIn) {
+        isAdminLoggedIn = false;
+        $('eingabePanel').style.display = 'none';
+        $('speichern').style.display = 'none';
+        $('tagLoeschen').style.display = 'none';
+        $('passwordChange').style.display = 'none';
+        $('adminStatus').textContent = 'Nur-Lese-Modus';
+        $('adminToggle').textContent = 'Admin-Login';
+        // Edit-Buttons ausblenden
+        document.querySelectorAll('.edit-buttons').forEach(el => el.style.display = 'none');
+        alert('Sie wurden abgemeldet');
+      } else {
+        const password = prompt('Admin-Passwort eingeben:');
+        if (password === ADMIN_PASSWORD) {
+          isAdminLoggedIn = true;
+          $('eingabePanel').style.display = 'block';
+          $('speichern').style.display = 'inline-block';
+          $('tagLoeschen').style.display = 'inline-block';
+          $('passwordChange').style.display = 'inline-block';
+          $('adminStatus').textContent = 'Admin-Modus aktiv';
+          $('adminToggle').textContent = 'Abmelden';
+          // Edit-Buttons einblenden
+          document.querySelectorAll('.edit-buttons').forEach(el => el.style.display = 'flex');
+          alert('Admin-Login erfolgreich!');
+        } else if (password !== null) {
+          alert('Falsches Passwort!');
+        }
+      }
+    }
+    
+    function changePassword() {
+      if (!isAdminLoggedIn) {
+        alert('Admin-Login erforderlich!');
+        return;
+      }
+      
+      const oldPassword = prompt('Aktuelles Passwort eingeben:');
+      if (oldPassword !== ADMIN_PASSWORD) {
+        alert('Aktuelles Passwort ist falsch!');
+        return;
+      }
+      
+      const newPassword = prompt('Neues Passwort eingeben:');
+      if (!newPassword || newPassword.length < 4) {
+        alert('Neues Passwort muss mindestens 4 Zeichen lang sein!');
+        return;
+      }
+      
+      const confirmPassword = prompt('Neues Passwort bestätigen:');
+      if (newPassword !== confirmPassword) {
+        alert('Passwörter stimmen nicht überein!');
+        return;
+      }
+      
+      ADMIN_PASSWORD = newPassword;
+      alert('Passwort erfolgreich geändert!');
+    }
+    
+    const fields = {
+      datum: $('datum'),
+      kunde: $('kunde'),
+      zeitart: $('zeitart'),
+      zeit: $('zeit'),
+      zeitvon: $('zeitvon'),
+      zeitbis: $('zeitbis'),
+      telefon: $('telefon'),
+      adresse: $('adresse'),
+      essen: $('essen'),
+      notiz: $('notiz'),
+      group: $('group'),
+      tour: $('tour'),
+      fahrer1: $('fahrer1'),
+      fahrer2: $('fahrer2')
+    };
+    
+    const state = {
+      orders: [],
+      currentDate: '',
+      editingOrder: null,
+      drivers: { tour1: '', tour2: '' }
+    };
+    
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+    fields.datum.value = todayString;
+    state.currentDate = todayString;
+    
+    function saveToLocalStorage(date, orders) {
+      try {
+        const key = `kleinfeldt-orders-${date}`;
+        const data = {
+          orders: orders,
+          drivers: {
+            tour1: fields.fahrer1.value.trim(),
+            tour2: fields.fahrer2.value.trim()
+          }
+        };
+        localStorage.setItem(key, JSON.stringify(data));
+        updateGespeicherteTage();
+        return true;
+      } catch (e) {
+        console.error('Fehler beim Speichern:', e);
+        return false;
+      }
+    }
+    
+    function loadFromLocalStorage(date) {
+      try {
+        const key = `kleinfeldt-orders-${date}`;
+        const data = localStorage.getItem(key);
+        if (data) {
+          const parsed = JSON.parse(data);
+          // Kompatibilität mit alten Daten
+          if (Array.isArray(parsed)) {
+            return { orders: parsed, drivers: { tour1: '', tour2: '' } };
+          }
+          return { orders: parsed.orders || [], drivers: parsed.drivers || { tour1: '', tour2: '' } };
+        }
+        return { orders: [], drivers: { tour1: '', tour2: '' } };
+      } catch (e) {
+        console.error('Fehler beim Laden:', e);
+        return { orders: [], drivers: { tour1: '', tour2: '' } };
+      }
+    }
+    
+    function deleteFromLocalStorage(date) {
+      try {
+        const key = `kleinfeldt-orders-${date}`;
+        localStorage.removeItem(key);
+        updateGespeicherteTage();
+        return true;
+      } catch (e) {
+        console.error('Fehler beim Löschen:', e);
+        return false;
+      }
+    }
+    
+    function getAllSavedDates() {
+      const dates = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('kleinfeldt-orders-')) {
+          const date = key.replace('kleinfeldt-orders-', '');
+          dates.push(date);
+        }
+      }
+      return dates.sort();
+    }
+    
+    function updateGespeicherteTage() {
+      const tageList = $('tageList');
+      const dates = getAllSavedDates();
+      
+      tageList.innerHTML = dates.map(date => {
+        const dateObj = new Date(date + 'T12:00:00');
+        const formatted = dateObj.toLocaleDateString('de-DE', {
+          weekday: 'short',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+        const isActive = date === state.currentDate;
+        
+        return `<div class="tag-chip ${isActive ? 'active' : ''}" onclick="loadDate('${date}')">${formatted}</div>`;
+      }).join('');
+    }
+    
+    function loadDate(date) {
+      state.currentDate = date;
+      fields.datum.value = date;
+      
+      const data = loadFromLocalStorage(date);
+      state.orders = data.orders;
+      state.drivers = data.drivers;
+      
+      // Fahrer-Namen in die Felder laden
+      fields.fahrer1.value = state.drivers.tour1;
+      fields.fahrer2.value = state.drivers.tour2;
+      
+      state.editingOrder = null;
+      render();
+      updateGespeicherteTage();
+    }
+    
+    fields.zeitart.onchange = () => {
+      const zeitFest = $('zeit-fest');
+      const zeitFenster = $('zeit-fenster');
+      
+      if (fields.zeitart.value === 'fest') {
+        zeitFest.style.display = 'block';
+        zeitFenster.style.display = 'none';
+        fields.zeitvon.value = '';
+        fields.zeitbis.value = '';
+      } else {
+        zeitFest.style.display = 'none';
+        zeitFenster.style.display = 'block';
+        fields.zeit.value = '';
+      }
+    };
+    
+    $('laden').onclick = () => {
+      const date = fields.datum.value;
+      if (!date) {
+        alert('Bitte ein Datum auswählen');
+        return;
+      }
+      loadDate(date);
+      alert(`Aufträge für ${new Date(date + 'T12:00:00').toLocaleDateString('de-DE')} geladen`);
+    };
+    
+    $('speichern').onclick = () => {
+      const date = fields.datum.value;
+      if (!date) {
+        alert('Bitte ein Datum auswählen');
+        return;
+      }
+      
+      if (saveToLocalStorage(date, state.orders)) {
+        state.currentDate = date;
+        state.drivers.tour1 = fields.fahrer1.value.trim();
+        state.drivers.tour2 = fields.fahrer2.value.trim();
+        render();
+        alert(`Aufträge für ${new Date(date + 'T12:00:00').toLocaleDateString('de-DE')} gespeichert`);
+      } else {
+        alert('Fehler beim Speichern');
+      }
+    };
+    
+    $('tagLoeschen').onclick = () => {
+      const date = fields.datum.value;
+      if (!date) {
+        alert('Bitte ein Datum auswählen');
+        return;
+      }
+      
+      const dateFormatted = new Date(date + 'T12:00:00').toLocaleDateString('de-DE');
+      if (confirm(`Wirklich alle Aufträge für ${dateFormatted} löschen?`)) {
+        if (deleteFromLocalStorage(date)) {
+          if (state.currentDate === date) {
+            state.orders = [];
+            render();
+          }
+          alert(`Aufträge für ${dateFormatted} gelöscht`);
+        } else {
+          alert('Fehler beim Löschen');
+        }
+      }
+    };
+    
+    $('add').onclick = () => {
+      const values = {};
+      for (const [key, field] of Object.entries(fields)) {
+        values[key] = field.value.trim();
+      }
+      
+      if (!values.kunde || !values.adresse) {
+        alert('Bitte Pflichtfelder ausfüllen (Kunde, Adresse)');
+        return;
+      }
+      
+      if (values.zeitart === 'fest' && !values.zeit) {
+        alert('Bitte eine feste Uhrzeit angeben');
+        return;
+      }
+      
+      if (values.zeitart === 'fenster' && (!values.zeitvon || !values.zeitbis)) {
+        alert('Bitte beide Zeiten für das Zeitfenster angeben');
+        return;
+      }
+      
+      if (values.zeitart === 'fenster' && values.zeitvon >= values.zeitbis) {
+        alert('Das Zeitfenster-Ende muss nach dem Anfang liegen');
+        return;
+      }
+      
+      if (state.editingOrder) {
+        const index = state.orders.findIndex(o => o.id === state.editingOrder.id);
+        if (index !== -1) {
+          state.orders[index] = { ...state.editingOrder, ...values };
+        }
+        state.editingOrder = null;
+        $('add').textContent = 'Auftrag hinzufügen';
+        $('add').className = 'btn btn-primary';
+      } else {
+        state.orders.push({
+          id: crypto.randomUUID(),
+          ...values
+        });
+      }
+      
+      state.currentDate = values.datum;
+      
+      // Fahrer-Namen aktualisieren
+      state.drivers.tour1 = fields.fahrer1.value.trim();
+      state.drivers.tour2 = fields.fahrer2.value.trim();
+      
+      render();
+      
+      ['kunde', 'telefon', 'adresse', 'essen', 'notiz', 'group', 'zeit', 'zeitvon', 'zeitbis'].forEach(key => {
+        fields[key].value = '';
+      });
+      
+      fields.zeitart.value = 'fest';
+      fields.zeitart.onchange();
+      
+      fields.kunde.focus();
+    };
+    
+    $('print').onclick = () => {
+      window.print();
+    };
+    
+    $('addrCheck').onclick = () => {
+      const addr = fields.adresse.value.trim();
+      if (!addr) {
+        alert('Bitte zuerst eine Lieferadresse eingeben.');
+        return;
+      }
+      window.open(createMapsURL(addr), '_blank');
+    };
+    
+    function render() {
+      const list1 = $('list1');
+      const list2 = $('list2');
+      list1.innerHTML = '';
+      list2.innerHTML = '';
+      
+      // Tour-Titel mit Fahrer-Namen aktualisieren
+      const tour1Title = document.querySelector('.tour-section:first-child .tour-title');
+      const tour2Title = document.querySelector('.tour-section:last-child .tour-title');
+      
+      const driver1 = fields.fahrer1.value.trim() || state.drivers.tour1;
+      const driver2 = fields.fahrer2.value.trim() || state.drivers.tour2;
+      
+      tour1Title.textContent = `🚚 Tour 1${driver1 ? ` - ${driver1}` : ''}`;
+      tour2Title.textContent = `🚛 Tour 2${driver2 ? ` - ${driver2}` : ''}`;
+      
+      const sorted = [...state.orders].sort((a, b) => {
+        const timeA = a.zeitart === 'fest' ? a.zeit : a.zeitvon;
+        const timeB = b.zeitart === 'fest' ? b.zeit : b.zeitvon;
+        return timeA.localeCompare(timeB);
+      });
+      
+      const groupCounts = new Map();
+      sorted.forEach(order => {
+        if (order.group) {
+          const key = `${order.tour}|${order.group}`;
+          groupCounts.set(key, (groupCounts.get(key) || 0) + 1);
+        }
+      });
+      
+      sorted.forEach(order => {
+        const isHighlighted = order.group && groupCounts.get(`${order.tour}|${order.group}`) > 1;
+        const cardElement = createOrderCard(order, isHighlighted);
+        
+        if (order.tour === '1') {
+          list1.appendChild(cardElement);
+        } else {
+          list2.appendChild(cardElement);
+        }
+      });
+    }
+    
+    function createOrderCard(order, highlight) {
+      const card = document.createElement('div');
+      card.className = `order-card${highlight ? ' highlight' : ''}`;
+      
+      const mapsURL = createMapsURL(order.adresse);
+      
+      let timeDisplay;
+      if (order.zeitart === 'fest') {
+        timeDisplay = escapeHtml(order.zeit);
+      } else {
+        timeDisplay = `${escapeHtml(order.zeitvon)} - ${escapeHtml(order.zeitbis)}`;
+      }
+      
+      card.innerHTML = `
+        <div class="order-header">
+          <div class="customer-name">${escapeHtml(order.kunde)}</div>
+          <div class="delivery-time">
+            ${timeDisplay}
+            ${order.group ? `<span class="group-badge">${escapeHtml(order.group)}</span>` : ''}
+          </div>
+        </div>
+        <div class="order-details">
+          <div><span class="detail-label">Telefon</span> <span>${order.telefon ? `<a href="tel:${escapeHtml(order.telefon)}" style="color: #dc3545; text-decoration: none; font-weight: bold;">${escapeHtml(order.telefon)}</a>` : 'Nicht angegeben'}</span></div>
+          <div><span class="detail-label">Adresse</span> <span>${escapeHtml(order.adresse).replace(/\n/g, '<br>')}</span></div>
+          ${order.essen ? `<div><span class="detail-label">Essen</span> <span>${escapeHtml(order.essen).replace(/\n/g, '<br>')}</span></div>` : ''}
+          ${order.notiz ? `<div><span class="detail-label">Notiz</span> <span>${escapeHtml(order.notiz).replace(/\n/g, '<br>')}</span></div>` : ''}
+        </div>
+        <a href="${mapsURL}" target="_blank" rel="noopener" class="qr-link">
+          <canvas class="qr-code"></canvas>
+        </a>
+        <div class="edit-buttons" style="display: none;">
+          <button class="edit-btn edit" onclick="editOrder('${order.id}')">Bearbeiten</button>
+          <button class="edit-btn move" onclick="moveOrder('${order.id}')">Tour ${order.tour === '1' ? '2' : '1'}</button>
+          <button class="edit-btn delete" onclick="deleteOrder('${order.id}')">Löschen</button>
+        </div>
+      `;
+
+      const canvas = card.querySelector('.qr-code');
+      try {
+        new QRious({
+          element: canvas,
+          value: mapsURL,
+          size: 70
+        });
+      } catch (e) {
+        console.warn('QRious nicht verfügbar');
+      }
+
+      return card;
+    }
+    
+    // Admin-geschützte Bearbeitungsfunktionen
+    function editOrder(id) {
+      if (!isAdminLoggedIn) {
+        alert('Admin-Login erforderlich!');
+        return;
+      }
+      
+      const order = state.orders.find(o => o.id === id);
+      if (!order) return;
+      
+      state.editingOrder = order;
+      
+      Object.keys(fields).forEach(key => {
+        if (order[key] !== undefined) {
+          fields[key].value = order[key];
+        }
+      });
+      
+      fields.zeitart.onchange();
+      
+      $('add').textContent = 'Änderungen speichern';
+      $('add').className = 'btn btn-secondary';
+      
+      $('eingabePanel').scrollIntoView({ behavior: 'smooth' });
+      fields.kunde.focus();
+    }
+    
+    function moveOrder(id) {
+      if (!isAdminLoggedIn) {
+        alert('Admin-Login erforderlich!');
+        return;
+      }
+      
+      const order = state.orders.find(o => o.id === id);
+      if (!order) return;
+      
+      const newTour = order.tour === '1' ? '2' : '1';
+      const customer = order.kunde;
+      
+      if (confirm(`"${customer}" von Tour ${order.tour} zu Tour ${newTour} verschieben?`)) {
+        order.tour = newTour;
+        render();
+      }
+    }
+    
+    function deleteOrder(id) {
+      if (!isAdminLoggedIn) {
+        alert('Admin-Login erforderlich!');
+        return;
+      }
+      
+      const order = state.orders.find(o => o.id === id);
+      if (!order) return;
+      
+      if (confirm(`Auftrag "${order.kunde}" wirklich löschen?`)) {
+        state.orders = state.orders.filter(order => order.id !== id);
+        
+        if (state.editingOrder && state.editingOrder.id === id) {
+          state.editingOrder = null;
+          $('add').textContent = 'Auftrag hinzufügen';
+          $('add').className = 'btn btn-primary';
+        }
+        
+        render();
+      }
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    function createMapsURL(address) {
+      let cleanAddress = String(address || '').trim();
+      
+      cleanAddress = cleanAddress
+        .replace(/str\b/gi, 'Straße')
+        .replace(/\bpl\b/gi, 'Platz')
+        .replace(/\bal\b/gi, 'Allee')
+        .replace(/lubeck/gi, 'Lübeck');
+      
+      if (!cleanAddress.toLowerCase().includes('deutschland') && 
+          !cleanAddress.toLowerCase().includes('germany')) {
+        cleanAddress += ', Deutschland';
+      }
+      
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cleanAddress)}`;
+    }
+    
+    // Initialisierung
+    updateGespeicherteTage();
+  </script>
+</body>
+</html>
